@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "pythonweb-hw10"
+version = "0.1.0"
+description = "pythonweb_hw10 django homework"
+authors = ["Dmytro-Tarasenko <ug.dotenko@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^5.0.3"
+mongoengine = "^0.28.2"
+sqlalchemy = "^2.0.29"
+pydantic = {extras = ["email"], version = "^2.6.4"}
+
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^3.1.0"
+faker = "^24.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
