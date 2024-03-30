@@ -11,6 +11,7 @@ django = "^5.0.3"
 mongoengine = "^0.28.2"
 sqlalchemy = "^2.0.29"
 pydantic = {extras = ["email"], version = "^2.6.4"}
+python-dotenv = "^1.0.1"
 
 
 [tool.poetry.group.dev.dependencies]
