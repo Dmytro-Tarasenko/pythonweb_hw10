@@ -30,10 +30,10 @@ class QuoteSQL(Base):
     __tablename__ = "quotes"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    author: Mapped[int] = mapped_column(ForeignKey("authors.id"), nullable=True)
+    author: Mapped[int] = mapped_column(ForeignKey("AuthorSQL.id"), nullable=True)
     quote: Mapped[str] = mapped_column(nullable=False)
     tags: Mapped[list["TagSQL"]] = relationship(
-        back_populates="quotes"
+        backref="quotes"
     )
 
 
@@ -62,5 +62,5 @@ if  __name__ == "__main__":
     tag2.save()
     quote1 = QuoteSQL(author=author1,
                       quote="Hello, World!",
-                      tags=["greeting", "world"])
+                      tags=[tag1, tag2])
     quote1.save()
