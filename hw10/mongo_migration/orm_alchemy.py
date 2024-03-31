@@ -37,6 +37,13 @@ class QuoteSQL(Base):
     )
 
 
+class TagsQuotes(Base):
+    __tablename__ = "tags_quotes"
+
+    quote_if: Mapped[int] = mapped_column(ForeignKey("QuoteSQL.id"), primary_key=True)
+    tag_id: Mapped[int] = mapped_column(ForeignKey("TagSQL.id"), primary_key=True)
+
+
 class AuthorSQL(Base):
     """SQLAlchemy Author Model."""
     __tablename__ = "authors"
