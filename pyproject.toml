@@ -12,6 +12,7 @@ mongoengine = "^0.28.2"
 sqlalchemy = "^2.0.29"
 pydantic = {extras = ["email"], version = "^2.6.4"}
 python-dotenv = "^1.0.1"
+psycopg2-binary = "^2.9.9"
 
 
 [tool.poetry.group.dev.dependencies]
