@@ -1,14 +1,16 @@
 """SQLAlchemy ORM for the mongo_migration database."""
 from os import getenv
+from typing import List, Optional
 
 from sqlalchemy import ForeignKey, create_engine, Table, Column
-from sqlalchemy.orm import declarative_base, mapped_column, relationship, Mapped
+from sqlalchemy.orm import declarative_base, mapped_column, relationship, Mapped, sessionmaker
 from dotenv import load_dotenv
 
 load_dotenv()
 
 engine = create_engine('sqlite:///hw10.sqlite')
 # engine = create_engine('postgresql://guest:guest@localhost:5432/hw10')
+DBSession = sessionmaker(bind=engine)
 
 Base = declarative_base()
 
@@ -29,7 +31,7 @@ class TagSQL(Base):
     tag: Mapped[str] = mapped_column(nullable=False,
                                      unique=True,
                                      )
-    quotes: Mapped[list["QuoteSQL"]] = relationship(
+    quotes: Mapped[Optional[List["QuoteSQL"]]] = relationship(
         secondary=tags_quotes_association,
         back_populates="tags"
     )
@@ -40,9 +42,10 @@ class QuoteSQL(Base):
     __tablename__ = "quotes"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    author: Mapped[int] = mapped_column(ForeignKey("authors.id"), nullable=True)
+    author_id: Mapped[int] = mapped_column(ForeignKey("authors.id"))
     quote: Mapped[str] = mapped_column(nullable=False)
-    tags: Mapped[list["TagSQL"]] = relationship(
+    author: Mapped["AuthorSQL"] = relationship()
+    tags: Mapped[Optional[List["TagSQL"]]] = relationship(
         secondary=tags_quotes_association,
         back_populates="quotes"
     )
@@ -54,11 +57,11 @@ class AuthorSQL(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     fullname: Mapped[str] = mapped_column(nullable=False,
-                                         unique=True)
-    birth_date: Mapped[str] = mapped_column(nullable=True)
-    birth_location: Mapped[str] = mapped_column(nullable=True)
-    description: Mapped[str] = mapped_column(nullable=True)
-    # quotes: Mapped[list[QuoteSQL]] = relationship()
+                                        unique=True)
+    birth_date: Mapped[Optional[str]] = mapped_column()
+    birth_location: Mapped[Optional[str]] = mapped_column()
+    description: Mapped[Optional[str]] = mapped_column()
+    quotes: Mapped[Optional[List[QuoteSQL]]] = relationship()
 
 
 if  __name__ == "__main__":
@@ -67,12 +70,29 @@ if  __name__ == "__main__":
                         birth_date="2000-01-01",
                         birth_location="USA",
                         description="A mysterious")
-    author1.save()
+    author2 = AuthorSQL(fullname="Jane Doe",
+                        birth_date="2002-02-02",
+                        birth_location="Canada",
+                        description="Cute")
     tag1 = TagSQL(tag="greeting")
     tag2 = TagSQL(tag="world")
-    tag1.save()
-    tag2.save()
-    quote1 = QuoteSQL(author=author1,
-                      quote="Hello, World!",
-                      tags=[tag1, tag2])
-    quote1.save()
+    tag3 = TagSQL(tag="hello")
+
+    with DBSession() as session:
+        session.add(author1)
+        session.add(author2)
+        session.add(tag1)
+        session.add(tag3)
+        session.add(tag2)
+        session.commit()
+        author_id = session.query(AuthorSQL).filter_by(fullname="John Doe").first().id
+        quote1 = QuoteSQL(author_id=author_id,
+                          quote="Hello, World!",
+                          tags=[tag1, tag2])
+        author_id = session.query(AuthorSQL).filter_by(fullname="Jane Doe").first().id
+        quote2 = QuoteSQL(author_id=author_id,
+                          quote="4 None Blond!",
+                          tags=[tag3, tag2])
+        session.add(quote1)
+        session.add(quote2)
+        session.commit()
