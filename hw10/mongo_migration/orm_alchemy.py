@@ -1,15 +1,24 @@
 """SQLAlchemy ORM for the mongo_migration database."""
 from os import getenv
 
-from sqlalchemy import ForeignKey, create_engine
+from sqlalchemy import ForeignKey, create_engine, Table, Column
 from sqlalchemy.orm import declarative_base, mapped_column, relationship, Mapped
 from dotenv import load_dotenv
 
 load_dotenv()
 
-engine = create_engine('postgresql://guest:guest@localhost:5432/hw10')
+engine = create_engine('sqlite:///hw10.sqlite')
+# engine = create_engine('postgresql://guest:guest@localhost:5432/hw10')
 
 Base = declarative_base()
+
+
+tags_quotes_association = Table(
+    "tags_quotes",
+    Base.metadata,
+    Column("quote_id", ForeignKey("quotes.id"), primary_key=True),
+    Column("tag_id", ForeignKey("tags.id"), primary_key=True)
+)
 
 
 class TagSQL(Base):
@@ -18,9 +27,10 @@ class TagSQL(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     tag: Mapped[str] = mapped_column(nullable=False,
-                                    unique=True,
+                                     unique=True,
                                      )
     quotes: Mapped[list["QuoteSQL"]] = relationship(
+        secondary=tags_quotes_association,
         back_populates="tags"
     )
 
@@ -30,18 +40,12 @@ class QuoteSQL(Base):
     __tablename__ = "quotes"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    author: Mapped[int] = mapped_column(ForeignKey("AuthorSQL.id"), nullable=True)
+    author: Mapped[int] = mapped_column(ForeignKey("authors.id"), nullable=True)
     quote: Mapped[str] = mapped_column(nullable=False)
     tags: Mapped[list["TagSQL"]] = relationship(
-        backref="quotes"
+        secondary=tags_quotes_association,
+        back_populates="quotes"
     )
-
-
-class TagsQuotes(Base):
-    __tablename__ = "tags_quotes"
-
-    quote_if: Mapped[int] = mapped_column(ForeignKey("QuoteSQL.id"), primary_key=True)
-    tag_id: Mapped[int] = mapped_column(ForeignKey("TagSQL.id"), primary_key=True)
 
 
 class AuthorSQL(Base):
@@ -54,10 +58,11 @@ class AuthorSQL(Base):
     birth_date: Mapped[str] = mapped_column(nullable=True)
     birth_location: Mapped[str] = mapped_column(nullable=True)
     description: Mapped[str] = mapped_column(nullable=True)
+    # quotes: Mapped[list[QuoteSQL]] = relationship()
 
 
 if  __name__ == "__main__":
-    # Base.metadata.create_all(engine)
+    Base.metadata.create_all(engine)
     author1 = AuthorSQL(fullname="John Doe",
                         birth_date="2000-01-01",
                         birth_location="USA",
