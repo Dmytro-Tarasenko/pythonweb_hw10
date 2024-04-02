@@ -42,7 +42,9 @@ class QuoteSQL(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     author_id: Mapped[int] = mapped_column(ForeignKey("app_quotes_author.id"))
     quote: Mapped[str] = mapped_column(nullable=False)
-    author: Mapped["AuthorSQL"] = relationship()
+    author: Mapped["AuthorSQL"] = relationship(
+        back_populates="quotes"
+    )
     tags: Mapped[Optional[List["TagSQL"]]] = relationship(
         secondary=tags_quotes_association,
         back_populates="quotes"
@@ -59,7 +61,9 @@ class AuthorSQL(Base):
     birth_date: Mapped[Optional[str]] = mapped_column()
     birth_location: Mapped[Optional[str]] = mapped_column()
     description: Mapped[Optional[str]] = mapped_column()
-    quotes: Mapped[Optional[List[QuoteSQL]]] = relationship()
+    quotes: Mapped[Optional[List[QuoteSQL]]] = relationship(
+        back_populates="author"
+    )
 
 
 if  __name__ == "__main__":
@@ -76,7 +80,7 @@ if  __name__ == "__main__":
     tag2 = TagSQL(tag="world")
     tag3 = TagSQL(tag="hello")
 
-    with DBSession() as session:
+    with DBSession().no_autoflush as session:
         session.add(author1)
         session.add(author2)
         session.add(tag1)
@@ -87,10 +91,10 @@ if  __name__ == "__main__":
         quote1 = QuoteSQL(author=author,
                           quote="Hello, World!",
                           tags=[tag1, tag2])
-        author_id = session.query(AuthorSQL).filter_by(fullname="Jane Doe").first()
-        quote2 = QuoteSQL(author=author_id,
+        author2 = session.query(AuthorSQL).filter_by(fullname="Jane Doe").first()
+        quote2 = QuoteSQL(author=author2,
                           quote="4 None Blond!",
-                          tags=[tag3, tag2])
+                          tags=[tag3, tag2, tag1])
         session.add(quote1)
         session.add(quote2)
         session.commit()
