@@ -37,10 +37,13 @@ if __name__ == "__main__":
                            born_date=author_mongo.born_date,
                            born_location=author_mongo.born_location,
                            description=author_mongo.description)
-        quote = QuoteSQL(quote=quote_mongo.quote,
-                         author=author,
-                         tags=tags)
+
         with DBSession() as session:
+            print(session)
+            quote = QuoteSQL(quote=quote_mongo.quote,
+                             author=author,
+                             tags=tags)
             session.add(quote)
             session.commit()
             print("Quote:", quote.author.fullname, quote.tags, "added.")
+        print(session)
