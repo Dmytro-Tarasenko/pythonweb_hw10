@@ -1,5 +1,5 @@
 """Migration script from MongoDB to PostgreSQL"""
-from orm_alchemy import DBSession as pg_session
+from sqlalchemy.orm import sessionmaker
 from orm_alchemy import TagSQL, AuthorSQL, QuoteSQL, Base, engine
 
 from odm_mongo import AuthorMongo, QuoteMongo
@@ -28,6 +28,7 @@ def is_quote_in(quote_text: str) -> bool:
 
 if __name__ == "__main__":
     Base.metadata.create_all(engine)
+    DBSession = sessionmaker(engine)
     for quote_mongo in QuoteMongo.objects:
         author_mongo: AuthorMongo = quote_mongo.author
         tags_mongo = quote_mongo.tags
@@ -39,7 +40,7 @@ if __name__ == "__main__":
         quote = QuoteSQL(quote=quote_mongo.quote,
                          author=author,
                          tags=tags)
-        with pg_session() as session:
+        with DBSession() as session:
             session.add(quote)
             session.commit()
             print("Quote:", quote.author.fullname, quote.tags, "added.")
