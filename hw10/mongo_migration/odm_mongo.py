@@ -18,7 +18,7 @@ if ATLAS_PARAMS is None:
     ATLAS_PARAMS = ''
 DB_NAME = "pythonweb_hw08"
 
-connect(host=(ATLAS_HOST + DB_NAME + ATLAS_PARAMS))
+connect(host=ATLAS_HOST + DB_NAME + ATLAS_PARAMS)
 
 
 class AuthorMongo(Document):

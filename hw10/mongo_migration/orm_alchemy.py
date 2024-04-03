@@ -13,8 +13,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-engine = create_engine('sqlite:///hw10.sqlite')
-# engine = create_engine('postgresql://guest:guest@localhost:5432/hw10')
+# engine = create_engine('sqlite:///hw10.sqlite')
+engine = create_engine('postgresql://guest:guest@localhost:5432/hw10')
 DBSession = sessionmaker(bind=engine)
 
 Base = declarative_base()
