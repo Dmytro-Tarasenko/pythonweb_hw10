@@ -1,9 +1,14 @@
 """SQLAlchemy ORM for the mongo_migration database."""
 from os import getenv
-from typing import List, Optional, Set
+from typing import List, Optional
 
 from sqlalchemy import ForeignKey, create_engine, Table, Column
-from sqlalchemy.orm import declarative_base, mapped_column, relationship, Mapped, sessionmaker
+from sqlalchemy.orm import (declarative_base,
+                            mapped_column,
+                            relationship,
+                            Mapped,
+                            sessionmaker)
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -58,43 +63,46 @@ class AuthorSQL(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     fullname: Mapped[str] = mapped_column(nullable=False,
                                         unique=True)
-    birth_date: Mapped[Optional[str]] = mapped_column()
-    birth_location: Mapped[Optional[str]] = mapped_column()
+    born_date: Mapped[Optional[str]] = mapped_column()
+    born_location: Mapped[Optional[str]] = mapped_column()
     description: Mapped[Optional[str]] = mapped_column()
     quotes: Mapped[Optional[List[QuoteSQL]]] = relationship(
         back_populates="author"
     )
 
 
-if  __name__ == "__main__":
+if __name__ == "__main__":
     Base.metadata.create_all(engine)
     author1 = AuthorSQL(fullname="John Doe",
-                        birth_date="2000-01-01",
-                        birth_location="USA",
+                        born_date="2000-01-01",
+                        born_location="USA",
                         description="A mysterious")
     author2 = AuthorSQL(fullname="Jane Doe",
-                        birth_date="2002-02-02",
-                        birth_location="Canada",
+                        born_date="2002-02-02",
+                        born_location="Canada",
                         description="Cute")
     tag1 = TagSQL(tag="greeting")
     tag2 = TagSQL(tag="world")
     tag3 = TagSQL(tag="hello")
 
-    with DBSession().no_autoflush as session:
-        session.add(author1)
-        session.add(author2)
-        session.add(tag1)
-        session.add(tag3)
-        session.add(tag2)
-        session.commit()
-        author = session.query(AuthorSQL).filter_by(fullname="John Doe").first()
-        quote1 = QuoteSQL(author=author,
+    with DBSession() as session:
+        # session.add(author1)
+        # session.add(author2)
+        # session.add(tag1)
+        # session.add(tag3)
+        # session.add(tag2)
+        # session.commit()
+        # author = session.query(AuthorSQL)\
+        #     .filter_by(fullname="John Doe").first()
+        quote1 = QuoteSQL(author=author1,
                           quote="Hello, World!",
                           tags=[tag1, tag2])
-        author2 = session.query(AuthorSQL).filter_by(fullname="Jane Doe").first()
-        quote2 = QuoteSQL(author=author2,
+        # author2 = session.query(AuthorSQL)\
+        #     .filter_by(fullname="Jane Doe").first()
+        quote2 = QuoteSQL(author=author1,
                           quote="4 None Blond!",
                           tags=[tag3, tag2, tag1])
         session.add(quote1)
+        session.commit()
         session.add(quote2)
         session.commit()
