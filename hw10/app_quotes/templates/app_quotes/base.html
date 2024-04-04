@@ -35,6 +35,16 @@
             </nav>
             <div class="w-1/2 flex items-center">
                 <ul class="flex flex-row-reverse w-full gap-4">
+                    {% if user.is_authenticated %}
+                    <li
+                        class="text-slate-800 transition ease-in-out delay-100 hover:scale-125 hover:text-indigo-700 duration-150 order-2">
+                        <a href="{% url 'app_quotes:login' %}">Login</a>
+                    </li>
+                    <li
+                        class="text-slate-800 transition ease-in-out delay-100 hover:scale-125 hover:text-indigo-700 duration-150 order-1">
+                        <a href="{% url 'app_quotes:logout' %}">Logout</a>
+                    </li>
+                    {% else %}
                     <li
                         class="text-slate-800 transition ease-in-out delay-100 hover:scale-125 hover:text-indigo-700 duration-150 order-2">
                         <a href="{% url 'app_quotes:login' %}">Login</a>
@@ -43,6 +53,7 @@
                         class="text-slate-800 transition ease-in-out delay-100 hover:scale-125 hover:text-indigo-700 duration-150 order-1">
                         <a href="{% url 'app_quotes:register' %}">Sign up</a>
                     </li>
+                    {% endif %}
                 </ul>
             </div>
         </header>
