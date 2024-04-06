@@ -10,14 +10,14 @@ from django.db.models import (Model,
 
 
 class Tag(Model):
-    name = CharField(max_length=100)
+    tag = CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
 
 
 class Quote(Model):
-    text = TextField()
+    quote = TextField()
     author = ForeignKey('Author', on_delete=CASCADE)
     tags = ManyToManyField(Tag)
 
@@ -26,11 +26,11 @@ class Quote(Model):
 
 
 class Author(Model):
-    fulname = CharField(max_length=100)
-    birth_date = DateField()
-    birth_location = CharField(max_length=100)
+    fullname = CharField(max_length=100)
+    born_date = DateField()
+    born_location = CharField(max_length=100)
     description = TextField()
     # quotes = ManyToOneRel(to=Quote, field='author')
 
     def __str__(self):
-        return f"{self.name} {self.birth_date}"
+        return f"{self.name} {self.born_date}"

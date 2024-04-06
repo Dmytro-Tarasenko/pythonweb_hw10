@@ -26,8 +26,12 @@ def tags(request,
 
 
 def login(request):
+    if request.method == 'POST':
+        return render(request=request,
+                      template_name='app_quotes/index.html',
+                      context={'msg': "Login handler"})
     return render(request=request,
-                  template_name='app_quotes/index.html',
+                  template_name='app_quotes/login.html',
                   context={'msg': "Login page"})
 
 
@@ -39,5 +43,5 @@ def logout(request):
 
 def register(request):
     return render(request=request,
-                  template_name='app_quotes/index.html',
+                  template_name='app_quotes/register.html',
                   context={'msg': "Signup page"})
