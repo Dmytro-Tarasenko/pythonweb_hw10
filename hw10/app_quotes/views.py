@@ -1,20 +1,26 @@
 from django.shortcuts import render
 
+from .models import Author, Quote, Tag
 
 # Create your views here.
 def index(request):
+    quotes = [{'quote': quote.quote,
+               'author': quote.author,
+               'tags': quote.tags.all()}
+              for quote in Quote.objects.using('postgre').all()]
     return render(request=request,
                   template_name='app_quotes/index.html',
-                  context={'msg': "Quotes app index"})
+                  context={'quotes': quotes})
 
 
 def authors(request,
             page: int = 1,
             author_id: int = None,
             name: str = None):
+    authors = Author.objects.using('postgre').all()
     return render(request=request,
-                  template_name='app_quotes/index.html',
-                  context={'msg': f"Author, page: {page}, id: {author_id}, name: {name}"})
+                  template_name='app_quotes/authors.html',
+                  context={'authors': authors})
 
 
 def tags(request,
