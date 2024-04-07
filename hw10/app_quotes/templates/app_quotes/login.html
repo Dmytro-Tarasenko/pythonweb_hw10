@@ -1,8 +1,18 @@
 {% extends 'app_quotes/base.html' %}
 
 {% block content %}
-<h1 class="text-center text-slate-800">Login</h2> 
-    <form action="/login" method="post" class="self-center w-1/2 mx-auto"> {% csrf_token %}
+<h1 class="text-center text-slate-800">Login</h2>
+    {% if msg%}
+    <div class="text-center w-1/2 mx-auto">
+            <p class="bg-green-600 p-4 rounded-lg">{{ msg }}</p>
+    </div>
+    {% endif %}
+    {% if err %}
+    <div class="text-center w-1/2 mx-auto">
+            <p class="bg-red-600 p-4 rounded-lg">{{ err }}</p>
+    </div>
+    {% endif %}
+    <form action="/login/" method="post" class="self-center w-1/2 mx-auto"> {% csrf_token %}
         <div class="flex flex-col gap-4 p-2">
             <label for="username" class="text-slate-800">Username</label>
             <input type="text" name="username" id="username" class="p-2 border-2 border-sky-100">
