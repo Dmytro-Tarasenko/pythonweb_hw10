@@ -4,27 +4,34 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import logout as dj_logout
 from django.contrib.auth import login as dj_login
 
-from .models import Author, Quote, Tag
+from .models import Author, Quote
+
 
 # Create your views here.
 def index(request):
     quotes = [{'quote': quote.quote,
                'author': quote.author,
-               'tags': quote.tags.all()}
-              for quote in Quote.objects.using('postgre').all()]
+               'tagslist': list(quote.tags.all()),
+               'href_name': quote.author.fullname.replace(' ', '_')}
+              for quote in Quote.objects.all()]
     return render(request=request,
                   template_name='app_quotes/index.html',
                   context={'quotes': quotes})
 
 
-def authors(request,
-            page: int = 1,
-            author_id: int = None,
-            name: str = None):
-    authors = Author.objects.using('postgre').all()
+def authors(request):
+    authors = Author.objects.all()
     return render(request=request,
                   template_name='app_quotes/authors.html',
                   context={'authors': authors})
+
+
+def author_name(request, name: str):
+    name = name.replace('_', ' ')
+    author = Author.objects.get(fullname=name)
+    return render(request=request,
+                  template_name='app_quotes/authors.html',
+                  context={'authors': [author]})
 
 
 def tags(request,
