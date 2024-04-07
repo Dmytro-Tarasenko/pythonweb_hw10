@@ -2,7 +2,7 @@
 
 {% block content %}
     {% for quote in quotes %}
-    <div class="container w-5/6 mx-auto my-1 border-2 border-zinc-200 rounded-md p-4 shadow-md bg-[#faeed770]">
+    <div class="container w-5/6 mx-auto mb-5 border-2 border-zinc-200 rounded-md p-4 shadow-md bg-[#faeed770]">
         <p class="text-lg font-medium pb-3 text-gray-700">{{ quote.quote }}</p>
         <p>by <span class="font-medium text-[#3677E8]">{{ quote.author.fullname }}</span>
         <a  class="text-indigo-600 transition ease-in-out delay-100 hover:text-indigo-800 duration-150"
@@ -18,4 +18,9 @@
         </div>
     </div>
     {% endfor %}
+    {% if user.is_authenticated %}
+    <div class="fab bg-blue-700 rounded-full" style="position: fixed; bottom: 10%; right: 5%; padding: 2rem; font-size: 2rem; line-height: 1rem;">
+        <a class="text-zinc-200">+</a>
+    </div>
+    {% endif %}
 {% endblock %}
