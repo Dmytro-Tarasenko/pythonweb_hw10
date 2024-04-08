@@ -76,7 +76,7 @@ def quotes(request,
     return render(request=request,
                   template_name='app_quotes/tagged-quotes.html',
                   context={'quotes': quotes,
-                           'tag': tag})
+                           'tag_name': tag})
 
 
 def login(request):
