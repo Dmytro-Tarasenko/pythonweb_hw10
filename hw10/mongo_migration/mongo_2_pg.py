@@ -6,7 +6,7 @@ from orm_alchemy import TagSQL, AuthorSQL, QuoteSQL, Base, engine
 from odm_mongo import AuthorMongo, QuoteMongo
 
 
-Base.metadata.create_all(engine)
+# Base.metadata.create_all(engine)
 DBSession = sessionmaker(engine)
 
 authors: Dict[str, AuthorSQL] = dict()

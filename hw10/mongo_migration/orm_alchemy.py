@@ -13,8 +13,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# engine = create_engine('sqlite:///hw10.sqlite')
-engine = create_engine('postgresql://guest:guest@localhost:5432/hw10')
+engine = create_engine('sqlite:///../hw10.sqlite3')
+# engine = create_engine('postgresql://guest:guest@localhost:5432/hw10')
 DBSession = sessionmaker(bind=engine)
 
 Base = declarative_base()
@@ -27,6 +27,13 @@ tags_quotes_association = Table(
     Column("tag_id", ForeignKey("app_quotes_tag.id"), primary_key=True)
 )
 
+quotes_tag_association = Table(
+    "app_quotes_tag_quotes",
+    Base.metadata,
+    Column("tag_id", ForeignKey("app_quotes_tag.id"), primary_key=True),
+    Column("quote_id", ForeignKey("app_quotes_quote.id"), primary_key=True)
+)
+
 
 class TagSQL(Base):
     """SQLAlchemy Tag Model."""
@@ -35,7 +42,7 @@ class TagSQL(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     tag: Mapped[str] = mapped_column(unique=True)
     quotes: Mapped[Optional[List["QuoteSQL"]]] = relationship(
-        secondary=tags_quotes_association,
+        secondary=quotes_tag_association,
         back_populates="tags"
     )
 

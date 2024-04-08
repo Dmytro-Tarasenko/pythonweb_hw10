@@ -28,7 +28,7 @@ class Quote(Model):
 
 class Author(Model):
     fullname = CharField(max_length=100)
-    born_date = DateField()
+    born_date = CharField(max_length=100)
     born_location = CharField(max_length=100)
     description = TextField()
     # quotes = ManyToOneRel(to=Quote, field='author')
