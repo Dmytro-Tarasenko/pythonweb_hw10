@@ -1,0 +1,10 @@
+{% extends 'app_quotes/base.html' %}
+
+{% block content %}
+    {% for author in authors %}
+        <div class="quote py-4">
+            <p>{{ author.fullname }}</p>
+            <p>born location: {{ author.born_location }}</p>
+        </div>
+    {% endfor %}
+{% endblock %}
